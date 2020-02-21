@@ -1,0 +1,91 @@
+#include <iostream>
+#include "Set.h"
+#include <cassert>
+using namespace std;
+
+int main()
+{
+	Set s1;
+	assert(s1.empty());
+	assert(s1.insert("Hello"));
+	assert(s1.insert("Hi"));
+	assert(s1.erase("Hi"));
+	assert(s1.size() == 1);
+	assert(!s1.erase("Sup bro"));
+	assert(!s1.insert("Hello"));
+	assert(s1.contains("Hello"));
+	s1.insert("World");
+	s1.insert("UCLA");
+	assert(s1.size() == 3);
+	assert(s1.erase("UCLA"));
+	assert(s1.size() == 2);
+	s1.insert("Yup");
+	string x;
+	assert(s1.get(0, x) && x == "Hello");
+	//s1.dump();
+	Set s2 = s1;
+	//s2.dump();
+	assert(s2.contains("Hello") && s2.contains("World") && s2.contains("Yup") && s2.size() == 3);
+	//s2.dump();
+	Set s3;
+	Set s4 = s3;
+	assert(s4.empty());
+	Set s5;
+	s5.insert("Nope");
+	s5.swap(s2);
+	assert(s5.contains("Hello") && s5.contains("World") && s5.contains("Yup") && s5.size() == 3);
+	//s5.dump();
+	assert(s2.contains("Nope") && s2.size() == 1);
+	s2.swap(s4);
+	assert(s2.empty() && s4.contains("Nope") && s4.size() == 1);
+	assert(!s4.get(3, x) && x == "Hello");
+	assert(s4.get(0, x) && x == "Nope");
+	s4 = s1;
+	assert(s4.contains("Hello") && s4.contains("World") && s4.contains("Yup") && s4.size() == 3);
+	s4 = s4;
+	assert(s4.contains("Hello") && s4.contains("World") && s4.contains("Yup") && s4.size() == 3);
+	s2 = s4;
+	assert(s2.contains("Hello") && s2.contains("World") && s2.contains("Yup") && s2.size() == 3);
+	assert(s2.erase("Hello") && s2.erase("World") && s2.erase("Yup") && s2.size() == 0);
+	s4 = s2;
+	assert(s4.empty());
+	assert(s1.erase("Hello") && s1.erase("World") && s1.size() == 1);
+	s4 = s1;
+	assert(s4.contains("Yup") && s4.size() == 1);
+	unite(s4, s5, s1);
+	assert(s1.contains("Hello") && s1.contains("Yup") && s1.contains("World") && s1.size() == 3);
+	unite(s5, s1, s4);
+	assert(s4.contains("Hello") && s4.contains("Yup") && s4.contains("World") && s4.size() == 3);
+	s3.insert("Yikes");
+	s3.insert("Ouch");
+	unite(s3, s4, s5);
+	assert(s5.contains("Hello") && s5.contains("Yup") && s5.contains("World") && s5.contains("Yikes") && s5.contains("Ouch") && s5.size() == 5);
+	unite(s5, s3, s5);
+	assert(s5.contains("Hello") && s5.contains("Yup") && s5.contains("World") && s5.contains("Yikes") && s5.contains("Ouch") && s5.size() == 5);
+	Set s6;
+	Set s7;
+	Set s8;
+	unite(s6, s7, s8);
+	assert(s6.empty() && s7.empty() && s8.empty());
+	s6.insert("TEST");
+	unite(s6, s7, s8);
+	assert(s8.contains("TEST") && s8.size() == 1);
+	unite(s5, s8, s8);
+	assert(s8.contains("Hello") && s8.contains("Yup") && s8.contains("World") && s8.contains("Yikes") && s8.contains("Ouch") && s8.contains("TEST") && s8.size() == 6);
+	unite(s8, s8, s8);
+	assert(s8.contains("Hello") && s8.contains("Yup") && s8.contains("World") && s8.contains("Yikes") && s8.contains("Ouch") && s8.contains("TEST") && s8.size() == 6);
+	subtract(s8, s5, s7);
+	assert(s7.contains("TEST") && s7.size() == 1);
+	Set s9;
+	subtract(s7, s9, s6);
+	assert(s6.contains("TEST"));
+	subtract(s7, s9, s7);
+	assert(s7.contains("TEST"));
+	subtract(s1, s7, s7);
+	//s7.dump();
+	assert(s7.contains("Hello") && s7.contains("World") && s7.contains("Yup") && s7.size() == 3);
+	subtract(s7, s7, s7);
+	assert(s7.empty());
+	cout << "Passed all tests." << endl;
+}
+
